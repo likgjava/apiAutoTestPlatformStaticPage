@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <!--向左对齐-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        学生管理系统
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
+                        <li><a href="../project/project_detail.html?pid=2">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li><a href="javascript:to_project_detail('{{session.pid}}')">项目概述</a></li>
+                <li class="active"><a href="javascript:to_api_list()">接口管理</a></li>
+                <li><a href="javascript:to_case_list()">用例管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <div class="container-fluid" style="padding-left: 0; margin-bottom: 10px;">
+                <div class="navbar-header">
+                    <button type="button" class="btn btn-default" onclick="to_api_list()">&lt; 接口列表</button>
+                    &nbsp;&nbsp;
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success">详情</button>
+                        <button type="button" class="btn btn-default" onclick="to_api_test('{{api.id}}')">测试</button>
+                    </div>
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-default" onclick="to_edit_api('{{api.id}}')">修改</button>
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row clearfix">
+                        <div class="col-md-10 column">
+                            <div>
+                                <span class="label label-success">{{api.api_protocol}}</span>
+                                {{api.api_url}}
+                            </div>
+                            <div>
+                                <span class="label label-primary">{{api.api_method}}</span>
+                                {{api.api_name}}
+                            </div>
+                        </div>
+                        <div class="col-md-2 column" style="text-align: right">
+                            <div>{{api.group_name}}</div>
+                            <div>{{api.update_time}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">请求头部</div>
+                <div class="panel-body">
+                    <table id="headerTable" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>标签</th>
+                            <th>内容</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for header in api_header_list%}
+                        <tr>
+                            <td>{{loop.index}}</td>
+                            <td>{{header.header_name}}</td>
+                            <td>{{header.header_value}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">请求参数[{{api.api_req_param_type}}]</div>
+                <div class="panel-body">
+                    {% if api.api_req_param_type == 'form' %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>标签</th>
+                            <th>内容</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for k,v in api_req_param_form.items() %}
+                        <tr>
+                            <td>{{loop.index}}</td>
+                            <td>{{k}}</td>
+                            <td>{{v}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% elif api.api_req_param_type == 'json' %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>标签</th>
+                            <th>内容</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for k,v in api_req_param_json.items() %}
+                        <tr>
+                            <td>{{loop.index}}</td>
+                            <td>{{k}}</td>
+                            <td>{{v}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    {{api_req_param_raw}}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">返回参数[{{api.api_res_param_type}}]</div>
+                <div class="panel-body">
+                    {% if api.api_res_param_type == 'json' %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>标签</th>
+                            <th>内容</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for k,v in api_res_param_json.items() %}
+                        <tr>
+                            <td>{{loop.index}}</td>
+                            <td>{{k}}</td>
+                            <td>{{v}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                        {{api_res_param_raw}}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">返回示例</div>
+                <div class="panel-body">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#panel-success" data-toggle="tab">成功结果</a>
+                            </li>
+                            <li>
+                                <a href="#panel-failure" data-toggle="tab">失败结果</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="panel-success">
+                                <pre style="margin-top: 10px">{{api.api_success_mock}}</pre>
+                            </div>
+                            <div class="tab-pane" id="panel-failure">
+                                <pre style="margin-top: 10px">{{api.api_failure_mock}}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+</body>
+</html>

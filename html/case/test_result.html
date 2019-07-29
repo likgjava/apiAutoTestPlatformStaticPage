@@ -1,0 +1,98 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">{{ case_item.api_name }}</h4>
+</div>
+<div class="modal-body">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p>请求地址：{{ result_data.url }}</p>
+            <p>请求方式：{{ result_data.api_method }}</p>
+            <p>状态码：{{ result_data.status_code }}</p>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">请求头</div>
+        <div class="panel-body">
+            {% for key,value in result_data.headers.items() %}
+            <p>{{ key }}：{{ value }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">请求参数[{% if result_data.api_req_param_type == 'raw' %}raw{% else %}form-data{% endif %}]</div>
+        <div class="panel-body">
+            {% if result_data.api_req_param_type == 'raw' %}
+            {{ result_data.raw }}
+            {% else %}
+            {% for key,value in result_data.api_req_data.items() %}
+            <p>{{ key }}：{{ value }}</p>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">返回结果校验规则</div>
+        <div class="panel-body">
+            <p>状态码规则：{{ result_data.check_status_code }}</p>
+            <p>匹配规则：
+                {% if result_data.check_type == 0 %}
+                不匹配
+                {% elif result_data.check_type == 1 %}
+                完全匹配
+                {% elif result_data.check_type == 2 %}
+                正则匹配
+                {% else %}
+                Json匹配
+                {% endif %}
+            </p>
+            <p>规则内容：
+                {% if result_data.check_type == 3 %}
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>参数名</th>
+                    <th>匹配规则</th>
+                    <th>匹配值</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for rule in result_data.check_rule %}
+                <tr>
+                    <td>{{ rule.key }}</td>
+                    <td>
+                        {% if rule.rule == 0 %}无
+                        {% elif rule.rule == 1 %}等于 [ = ]
+                        {% elif rule.rule == 2 %}不等于 [ != ]
+                        {% elif rule.rule == 3 %}大于 [ &gt; ]
+                        {% elif rule.rule == 4 %}小于 [ &lt; ]
+                        {% elif rule.rule == 5 %}正则 [ Reg= ]
+                        {% endif %}
+                    </td>
+                    <td>{{ rule.value }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            {{ result_data.check_rule }}
+            {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">实际返回结果</div>
+        <div class="panel-body">
+            <p>实际状态码：{{ result_data.status_code }}</p>
+            <p>实际返回内容：</p>
+            <pre class="{% if is_success %}return-body-success{% else %}return-body-failure{% endif %}">{{ result_data.response_body }}</pre>
+        </div>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>

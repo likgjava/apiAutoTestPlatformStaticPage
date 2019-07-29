@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <!--向左对齐-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        学生管理系统
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
+                        <li><a href="../project/project_detail.html?pid=2">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li><a href="javascript:to_project_detail('{{session.pid}}')">项目概述</a></li>
+                <li><a href="javascript:to_api_list()">接口管理</a></li>
+                <li class="active"><a href="javascript:to_case_list()">用例管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="container-fluid" style="padding-left: 0; margin-bottom: 10px;">
+                <div class="navbar-header">
+                    <button type="button" class="btn btn-default" onclick="to_case_list()">&lt; 用例列表</button>
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-success" onclick="openSelectApiListModal()">+ 已有接口</button>
+                    <button type="button" class="btn btn-success" onclick="to_add_case_item('{{case.id}}')">+ 空白接口</button>
+                    &nbsp;&nbsp;
+                    <!--如果该用例下包含接口-->
+                    <button type="button" class="btn btn-info btn-sm" onclick="auto_test_batch('{{case.id}}')">
+                        <span class="glyphicon glyphicon-tasks"></span> 测试全部
+                    </button>
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                </div>
+            </div>
+
+            <table id="itemListTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>顺序</th>
+                    <th>接口名称</th>
+                    <th>请求方式</th>
+                    <th>URL</th>
+                    <th>测试结果</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for case_item in case_item_list %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{case_item.api_name}}</td>
+                    <td><span class="label label-success">{{case_item.api_method}}</span></td>
+                    <td>{{case_item.api_url}}</td>
+                    <td data-name="result">尚无测试结果</td>
+                    <td>
+                        <button title="测试" type="button" class="btn btn-default btn-sm" onclick="auto_test(this, '{{case_item.id}}')">
+                            <span class="glyphicon glyphicon-flash"></span>
+                        </button>
+                        <button title="修改" type="button" class="btn btn-default btn-sm" onclick="to_edit_case_item('{{case_item.id}}')">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button title="删除" type="button" class="btn btn-default btn-sm" onclick="del_case_item('{{case.id}}', '{{case_item.id}}')">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 选择接口列表 -->
+<div class="modal fade" id="selectApiListModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content" id="selectApiListDiv"></div>
+    </div>
+</div>
+<!-- 测试结果 -->
+<div class="modal fade" id="testResultModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function selectedApi(api_id) {
+        window.location.href = '/add_case_item?case_id={{ case.id }}&api_id=' + api_id;
+        $("#selectApiListModal").modal('hide');
+    }
+
+    function to_edit_case_item(item_id) {
+        window.location.href = './edit_case_item?item_id=' + item_id;
+    }
+
+
+
+    function openSelectApiListModal() {
+        $("#selectApiListModal").modal({
+            remote: "./select_api_list"
+        });
+    }
+
+    function reloadSelectApiList(group_id) {
+        var url = '/select_api_list';
+        if (group_id) {
+            url += '?group_id=' + group_id
+        }
+        $("#selectApiListDiv").load(url);
+    }
+
+    function auto_test(dom, item_id) {
+        var resultTd = $(dom).parent().parent().find('td[data-name=result]');
+        resultTd.html('测试中...');
+        $.post('/auto_test?item_id=' + item_id, function (json) {
+            //alert(JSON.stringify(json))
+            var html = '';
+            if (json.code === '0000') {
+                if (json.success) {
+                    html = '<a href="javascript:;" class="result-success" onclick="viewTestResult(' + json.item_result_id + ')">成功，查看详情</a>';
+                } else {
+                    html = '<a href="javascript:;" class="result-failure" onclick="viewTestResult(' + json.item_result_id + ')">失败，查看详情</a>';
+                }
+            } else {
+                html = '系统异常';
+            }
+            resultTd.html(html);
+        });
+    }
+
+    function auto_test_batch(case_id) {
+        var resultTd = $('#itemListTable').find('td[data-name=result]');
+        resultTd.html('测试中...');
+        $.post('/auto_test_batch?case_id=' + case_id, function (json) {
+            //alert(JSON.stringify(json))
+            var html = '';
+            if (json.code === '0000') {
+                resultTd.each(function (i, dom) {
+                    var test_result = json.test_result_list[i];
+                    if (test_result.success) {
+                        html = '<a href="javascript:;" class="result-success" onclick="viewTestResult(' + test_result.item_result_id + ')">成功，查看详情</a>';
+                    } else {
+                        html = '<a href="javascript:;" class="result-failure" onclick="viewTestResult(' + test_result.item_result_id + ')">失败，查看详情</a>';
+                    }
+                    $(dom).html(html);
+                });
+
+            } else {
+                html = '系统异常';
+                resultTd.html(html);
+            }
+        });
+    }
+
+
+    function viewTestResult(item_result_id) {
+        $("#testResultModal").modal({
+            remote: "/test_result?id=" + item_result_id
+        });
+    }
+
+    function selectRequestParamTab(dom, type) {
+        $(dom).removeClass('btn-default').addClass('btn-success');
+        $(dom).siblings().removeClass('btn-success').addClass('btn-default');
+        if (type === 'form') {
+            $('#paramTable').parent().show();
+            $('#rawDiv').hide();
+        } else {
+            $('#paramTable').parent().hide();
+            $('#rawDiv').show();
+        }
+    }
+
+    function changeHeaderValue(dom) {
+        var nextTr = $(dom).parent().parent().next();
+        if ($(dom).val() !== '' && nextTr.html() == null) {
+            $(dom).parent().parent().find('td:last').show();
+            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
+
+            $(dom).parent().parent().parent().find('input[name=headerLabel]').bsSuggest(headerLabelData);
+        }
+    }
+
+    function changeParamValue(dom) {
+        var nextTr = $(dom).parent().parent().next();
+        if ($(dom).val() !== '' && nextTr.html() == null) {
+            $(dom).parent().parent().find('td:last').show();
+            $(dom).parent().parent().parent().append($('#paramTrTemplate').html());
+        }
+    }
+
+    function add_api() {
+        window.location.href = '/add_api'
+    }
+
+    function delParamTableTr(dom) {
+        $(dom).parent().parent().remove();
+    }
+
+
+    $(document).ready(function () {
+        activeMenu('/case_list');
+
+        $("#selectApiListModal").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#testResultModal").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+
+        $('input[name=headerLabel]').bsSuggest(headerLabelData);
+
+    });
+
+    var headerLabelData = {
+        indexId: 0,
+        indexKey: 0,
+        //showBtn: false,
+        allowNoKeyword: false,
+        inputWarnColor: null,
+        ignorecase: true,
+        data: {
+            'value': [
+                {'v': 'Accept'},
+                {'v': 'Accept-Charset'},
+                {'v': 'Accept-Encoding'},
+                {'v': 'Accept-Language'},
+                {'v': 'Accept-Ranges'},
+                {'v': 'Authorization'},
+                {'v': 'Cache-Control'},
+                {'v': 'Connection'},
+                {'v': 'Cookie'},
+                {'v': 'Content-Length'},
+                {'v': 'Content-Type'},
+                {'v': 'Content-MD5'},
+                {'v': 'Date'},
+                {'v': 'Expect'},
+                {'v': 'From'},
+                {'v': 'Host'},
+                {'v': 'If-Match'},
+                {'v': 'If-Modified-Since'},
+                {'v': 'If-None-Match'},
+                {'v': 'If-Range'},
+                {'v': 'If-Unmodified-Since'},
+                {'v': 'Max-Forwards'},
+                {'v': 'Origin'},
+                {'v': 'Pragma'},
+                {'v': 'Proxy-Authorization'},
+                {'v': 'Range'},
+                {'v': 'Referer'},
+                {'v': 'TE'},
+                {'v': 'Upgrade'},
+                {'v': 'User-Agent'},
+                {'v': 'Via'},
+                {'v': 'Warning'}
+            ]
+        }
+    };
+
+</script>
+</body>
+</html>

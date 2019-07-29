@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        请选择一个项目<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:to_project_detail(1)">学生管理系统</a></li>
+                        <li><a href="javascript:to_project_detail(2)">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li class="active"><a href="javascript:to_project_list()">项目管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="container-fluid navbar-default" style="padding-left: 0; margin-bottom: 10px;">
+                <div class="navbar-header form-inline">
+                    <button type="button" class="btn btn-success" onclick="openAddProjectModal()">+ 新增项目</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="paramTable" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>版本号</th>
+                        <th>基本路径</th>
+                        <th>最后修改时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>学生管理系统</td>
+                        <td>1.0</td>
+                        <td>127.0.0.1</td>
+                        <td>2018-03-22 14:22:54</td>
+                        <td>
+                            <button title="详情" type="button" class="btn btn-default btn-sm"
+                                    onclick="to_project_detail('{{p.id}}')">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </button>
+                            <button title="修改" type="button" class="btn btn-default btn-sm"
+                                    onclick="openEditProjectModal('{{p.id}}')">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </button>
+                            <button title="删除" type="button" class="btn btn-default btn-sm"
+                                    onclick="del_project('{{p.id}}')">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加项目的模态框 -->
+<div class="modal fade" id="addProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<!-- 修改项目的模态框 -->
+<div class="modal fade" id="editProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function openAddProjectModal() {
+        $("#addProjectModal").modal({
+            remote: "./add_project"
+        });
+    }
+
+    function openEditProjectModal(pid) {
+        $("#editProjectModal").modal({
+            remote: "./edit_project?pid=" + pid
+        });
+    }
+
+    $(document).ready(function () {
+    });
+</script>
+</body>
+</html>

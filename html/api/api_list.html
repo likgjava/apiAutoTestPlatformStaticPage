@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <!--向左对齐-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        学生管理系统
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
+                        <li><a href="../project/project_detail.html?pid=2">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li><a href="javascript:to_project_detail('{{session.pid}}')">项目概述</a></li>
+                <li class="active"><a href="javascript:to_api_list()">接口管理</a></li>
+                <li><a href="javascript:to_case_list()">用例管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="row">
+                <div class="col-sm-3 col-md-2">
+                    <button type="button" class="btn btn-success" onclick="openGroupModal()">+ 新建分组</button>
+                    <ul class="list-group" style="margin-top: 10px">
+                        <li class="list-group-item">
+                            <b>分组</b>
+                            <a class="badge" onclick="openGroupListModal()">管理</a>
+                        </li>
+                        <a href="./api_list" class="list-group-item {% if not group_id %}active{% endif %}">所有接口</a>
+                        {% for api_group in api_group_list%}
+                        <a href="./api_list?group_id={{api_group.id}}" class="list-group-item {% if group_id==api_group.id %}active{% endif %}">{{api_group.group_name}}</a>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-sm-9 col-md-10">
+
+                    <div class="container-fluid navbar-default" style="padding-left: 0; margin-bottom: 10px;">
+                        <div class="navbar-header form-inline">
+                            <form action="/api_list">
+                                <button type="button" class="btn btn-success" onclick="to_add_api({{api_group_list|length}})">+ 添加接口</button>
+                                <input type="text" class="form-control" name="q" value="{{q}}" placeholder="搜索接口">
+                                <input type="hidden" name="group_id" value="{{ group_id }}" />
+                                <button type="submit" class="btn btn-default">搜索</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table id="paramTable" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>接口名称</th>
+                                <th>接口URL</th>
+                                <th>请求方式</th>
+                                <th>更新日期</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for api in api_list %}
+                                <tr>
+                                    <td>{{api.api_name}}</td>
+                                    <td>{{api.api_url}}</td>
+                                    <td><span class="label label-success">{{api.api_method}}</span></td>
+                                    <td>{{api.update_time}}</td>
+                                    <td>
+                                        <button title="详情" type="button" class="btn btn-default btn-sm"
+                                                onclick="to_api_detail('{{api.id}}')">
+                                            <span class="glyphicon glyphicon-eye-open"></span>
+                                        </button>
+                                        <button title="修改" type="button" class="btn btn-default btn-sm"
+                                                onclick="to_edit_api('{{api.id}}')">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                        </button>
+                                        <button title="删除" type="button" class="btn btn-default btn-sm"
+                                                onclick="del_api('{{api.id}}', '{{group_id}}')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 新增分组 -->
+<div class="modal fade" id="addGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<!-- 分组列表 -->
+<div class="modal fade" id="groupListModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function to_add_api(groupCount) {
+        if(groupCount === 0){
+            alert('请先建立分组！');
+            return;
+        }
+        window.location.href = './add_api';
+    }
+
+    function openGroupModal() {
+        // $('#groupForm')[0].reset();
+        // $('#groupModal').modal('show');
+        $("#addGroupModal").modal({
+            remote: "./add_api_group"
+        });
+    }
+    function openGroupListModal() {
+        $("#groupListModal").modal({
+            remote: "./api_group_list"
+        });
+    }
+    function save_api_group() {
+        var data = {};
+        data['group_name'] = $('#group_name').val();
+        $.post('./save_api_group', data, function (json) {
+            if(json.code === '0000'){
+                alert('保存成功');
+                $('#groupModal').modal('hide');
+                window.location.href = './api_list';
+            }else{
+                alert(json.msg);
+            }
+        });
+    }
+    function update_api_group(dom, group_id) {
+        var group_name = $(dom).parent().parent().find('input[name=group_name]').val();
+        if(group_name === ''){
+            alert('请填写分组名称！');
+            return false;
+        }
+
+        $.post('./save_api_group', {id:group_id, group_name:group_name}, function (json) {
+            if(json.code === '0000'){
+                isGroupUpdated = true;
+                alert('修改成功');
+            }else{
+                alert(json.msg);
+            }
+        });
+    }
+    function del_api_group(dom, groupId) {
+        if (!confirm('确定删除该分组吗？')) {
+            return false;
+        }
+        $.post('./del_api_group', {id: groupId}, function (json) {
+            if (json.code === '0000') {
+                $(dom).parent().parent().remove();
+                isGroupUpdated = true;
+            } else {
+                alert(json.msg);
+            }
+        });
+    }
+
+    //分组修改标记
+    var isGroupUpdated = false;
+    $(document).ready(function () {
+        $("#groupListModal").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+            if(isGroupUpdated){
+                window.location.href = '/api_list';
+            }
+        });
+    });
+</script>
+</body>
+</html>

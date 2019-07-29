@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <!--向左对齐-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        学生管理系统
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
+                        <li><a href="../project/project_detail.html?pid=2">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li><a href="javascript:to_project_detail('{{session.pid}}')">项目概述</a></li>
+                <li><a href="javascript:to_api_list()">接口管理</a></li>
+                <li class="active"><a href="javascript:to_case_list()">用例管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <div class="container-fluid" style="padding-left: 0; margin-bottom: 10px;">
+                <div class="navbar-header">
+                    <button type="button" class="btn btn-default" onclick="to_case_detail('{{case.id}}')">&lt; 返回
+                    </button>
+                </div>
+                <div class="nav navbar-nav navbar-right">
+                    <button type="button" class="btn btn-success" onclick="save_case_item()">保存</button>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form id="defaultForm" class="form-horizontal" role="form">
+                        <input type="hidden" id="case_id" value="{{ case.id }}">
+                        <div class="form-group">
+                            <label for="api_name" class="col-sm-2 control-label">接口名称：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="api_name" value="{{api.api_name}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="api_method" class="col-sm-2 control-label">请求地址：</label>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="api_method" onchange="changeMethod(this)">
+                                    <option value="POST" {% if api.api_method=='POST' %}selected{% endif %}>POST
+                                    </option>
+                                    <option value="GET" {% if api.api_method=='GET' %}selected{% endif %}>GET</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="api_protocol">
+                                    <option value="HTTP" {% if api.api_protocol=='HTTP' %}selected{% endif %}>HTTP
+                                    </option>
+                                    <option value="HTTPS" {% if api.api_protocol=='HTTPS' %}selected{% endif %}>HTTPS
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="api_url" placeholder="测试地址"
+                                       value="{{api.api_url}}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">请求头部</div>
+                <div class="panel-body">
+                    <table id="headerTable" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>标签</th>
+                            <th>内容</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for api_header in api_header_list %}
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="name" placeholder="头部标签"
+                                       value="{{api_header.header_name}}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="value" onkeyup="changeHeaderValue(this)"
+                                       placeholder="头部内容" alue="{{api_header.header_value}}">
+                            </td>
+                            <td>
+                                <a onclick="openBindParamModal(this, 'header')">关联</a>
+                                <a onclick="delThisTr(this)">删除</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="name" placeholder="头部标签">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="value"
+                                       onkeyup="changeHeaderValue(this)" placeholder="头部内容">
+                            </td>
+                            <td>
+                                <a onclick="openBindParamModal(this, 'header')">关联</a>
+                                <a onclick="delThisTr(this)" style="display: none">删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">请求参数</div>
+                <div class="panel-body">
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="api_req_param_type" value="form" checked>form-data
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="api_req_param_type" value="json">json
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="api_req_param_type" value="raw">raw
+                        </label>
+                    </div>
+                    <div id="formDiv" class="table-responsive">
+                        <table id="formTable" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>参数名</th>
+                                <th>参数值</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for k,v in api_req_param_form.items() %}
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="name" value="{{k}}"
+                                           onkeyup="changeRelationParamValue(this)" placeholder="参数名">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                           onkeyup="changeRelationParamValue(this)" placeholder="参数值">
+                                </td>
+                                <td>
+                                    <a onclick="openBindParamModal(this)">关联</a>
+                                    <a onclick="delThisTr(this)">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="name" onkeyup="changeRelationParamValue(this)"
+                                           placeholder="参数名">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="value"
+                                           onkeyup="changeRelationParamValue(this)" placeholder="参数值">
+                                </td>
+                                <td>
+                                    <a onclick="openBindParamModal(this)">关联</a>
+                                    <a onclick="delThisTr(this)" style="display: none">删除</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="jsonDiv" class="table-responsive" style="display: none">
+                        <table id="jsonTable" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>参数名</th>
+                                <th>参数值</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for k,v in api_req_param_json.items() %}
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="name" value="{{k}}"
+                                           onkeyup="changeRelationParamValue(this)" placeholder="参数名">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                           onkeyup="changeRelationParamValue(this)" placeholder="参数值">
+                                </td>
+                                <td>
+                                    <a onclick="openBindParamModal(this)">关联</a>
+                                    <a onclick="delThisTr(this)">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="name" onkeyup="changeRelationParamValue(this)"
+                                           placeholder="参数名">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="value"
+                                           onkeyup="changeRelationParamValue(this)" placeholder="参数值">
+                                </td>
+                                <td>
+                                    <a onclick="openBindParamModal(this)">关联</a>
+                                    <a onclick="delThisTr(this)" style="display: none">删除</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="rawDiv" style="display: none; margin-top: 10px;">
+                        <textarea id="raw" class="form-control" rows="4"
+                                  placeholder="源数据">{{api_req_param_raw}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">返回参数</div>
+                <div class="panel-body">
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="api_res_param_type" value="json" checked>json
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="api_res_param_type" value="raw">raw
+                        </label>
+                    </div>
+                    <div id="jsonResDiv" class="table-responsive">
+                        <table id="jsonResTable" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>参数名</th>
+                                <th>参数值</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for k,v in api_res_param_json.items() %}
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="name" value="{{k}}" placeholder="参数名">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                           onkeyup="changeParamValue(this)" placeholder="参数值">
+                                </td>
+                                <td>
+                                    <a onclick="delThisTr(this)">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="name" placeholder="参数名">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="value"
+                                           onkeyup="changeParamValue(this)" placeholder="参数值">
+                                </td>
+                                <td style="display: none">
+                                    <a onclick="delThisTr(this)">删除</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="rawResDiv" style="display: none; margin-top: 10px;">
+                        <textarea id="resRaw" class="form-control" rows="4" placeholder="源数据">{{api_res_param_raw}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">测试结果校验规则</div>
+                <div class="panel-body">
+                    <div>
+                        <!--校验类型[0:不校验; 1:完全校验; 2:正则校验; 3:json校验]-->
+                        <label class="radio-inline">
+                            <input type="radio" name="check_type" value="0" onclick="select_check_type(this, 0)" checked>不校验
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="check_type" value="3" onclick="select_check_type(this, 3)">Json校验
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="check_type" value="1" onclick="select_check_type(this, 1)">完全校验
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="check_type" value="2" onclick="select_check_type(this, 2)">正则校验
+                        </label>
+                    </div>
+
+                    <div class="form-inline" id="statusCodeDiv" style="margin-top: 10px; display: none;">
+                        <input type="text" class="form-control" id="check_status_code" placeholder="响应状态码">
+                    </div>
+
+                    <table id="jsonCheckTable" class="table table-striped" style="display: none">
+                        <thead>
+                        <tr>
+                            <th>参数名</th>
+                            <th>校验规则</th>
+                            <th>校验值</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="key"
+                                       onkeyup="changeJsonCheckValue(this)" placeholder="参数名">
+                            </td>
+                            <td>
+                                <select class="form-control" name="rule">
+                                    <option value="0">无</option>
+                                    <option value="1">等于 [ = ]</option>
+                                    <option value="2">不等于 [ != ]</option>
+                                    <option value="3">大于 [ &gt; ]</option>
+                                    <option value="4">小于 [ &lt; ]</option>
+                                    <option value="5">正则 [ Reg= ]</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="value"
+                                       onkeyup="changeJsonCheckValue(this)" placeholder="校验值">
+                            </td>
+                            <td style="display: none">
+                                <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div id="textCheckDiv" style="display: none; margin-top: 10px;">
+                        <textarea id="textCheck" class="form-control" rows="4" placeholder="校验表达式"></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!--模板-->
+<table style="display: none">
+    <tbody id="headerTrTemplate">
+    <tr>
+        <td>
+            <input type="text" class="form-control" name="name" placeholder="头部标签">
+        </td>
+        <td>
+            <input type="text" class="form-control" name="value" onkeyup="changeHeaderValue(this)" placeholder="头部内容">
+        </td>
+        <td>
+            <a onclick="openBindParamModal(this, 'header')">关联</a>
+            <a onclick="delThisTr(this)" style="display: none">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table style="display: none">
+    <tbody id="relationParamTrTemplate">
+    <tr>
+        <td>
+            <input type="text" class="form-control" name="name" onkeyup="changeRelationParamValue(this)"
+                   placeholder="参数名">
+        </td>
+        <td>
+            <input type="text" class="form-control" name="value" onkeyup="changeRelationParamValue(this)"
+                   placeholder="参数值">
+        </td>
+        <td>
+            <a onclick="openBindParamModal(this)">关联</a>
+            <a onclick="delThisTr(this)" style="display: none">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table style="display: none">
+    <tbody id="paramTrTemplate">
+    <tr>
+        <td>
+            <input type="text" class="form-control" name="name" onkeyup="changeParamValue(this)"
+                   placeholder="参数名">
+        </td>
+        <td>
+            <input type="text" class="form-control" name="value" onkeyup="changeParamValue(this)"
+                   placeholder="参数值">
+        </td>
+        <td style="display: none">
+            <a onclick="delThisTr(this)">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table style="display: none">
+    <tbody id="jsonCheckTrTemplate">
+    <tr>
+        <td>
+            <input type="text" class="form-control" name="key" onkeyup="changeJsonCheckValue(this)"
+                   placeholder="参数名">
+        </td>
+        <td>
+            <select class="form-control" name="rule">
+                <option value="0">无</option>
+                <option value="1">等于 [ = ]</option>
+                <option value="2">不等于 [ != ]</option>
+                <option value="3">大于 [ &gt; ]</option>
+                <option value="4">小于 [ &lt; ]</option>
+                <option value="5">正则 [ Reg= ]</option>
+            </select>
+        </td>
+        <td>
+            <input type="text" class="form-control" name="value" onkeyup="changeJsonCheckValue(this)"
+                   placeholder="校验值">
+        </td>
+        <td style="display: none">
+            <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 绑定参数值 -->
+<div class="modal fade" id="bindParamModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function openBindParamModal(dom, type) {
+        if (type == null) {
+            type = "param"
+        }
+        var index = $(dom).parent().parent().index();
+        $("#bindParamModal").modal({
+            remote: './bind_param?case_id={{case.id}}&index=' + index + '&type=' + type
+        });
+    }
+
+    function changeMethod(dom) {
+        var rawBut = $('#rawBut');
+        if ($(dom).val() === 'POST') {
+            rawBut.show();
+        } else {
+            rawBut.hide();
+            if (rawBut.hasClass('btn-success')) {
+                rawBut.siblings().click();
+            }
+        }
+    }
+
+    function selectRequestParamTab(dom, type) {
+        $(dom).removeClass('btn-default').addClass('btn-success');
+        $(dom).siblings().removeClass('btn-success').addClass('btn-default');
+        if (type === 'form') {
+            $('#paramTable').parent().show();
+            $('#rawDiv').hide();
+        } else {
+            $('#paramTable').parent().hide();
+            $('#rawDiv').show();
+        }
+    }
+
+
+    function changeHeaderValue(dom) {
+        var nextTr = $(dom).parent().parent().next();
+        if ($(dom).val() !== '' && nextTr.html() == null) {
+            $(dom).parent().parent().find('td:last a').show();
+            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
+        }
+    }
+
+
+    function changeJsonCheckValue(dom) {
+        var nextTr = $(dom).parent().parent().next();
+        if ($(dom).val() !== '' && nextTr.html() == null) {
+            $(dom).parent().parent().find('td:last').show();
+            $(dom).parent().parent().parent().append($('#jsonCheckTrTemplate').html());
+        }
+    }
+
+    function changeStatusCode(dom) {
+        if ($(dom).val() === '0') {
+            $('#customStatusCode').show();
+        } else {
+            $('#customStatusCode').hide();
+        }
+    }
+
+
+    $(document).ready(function () {
+        // activeMenu('/case_list');
+
+        $("#bindParamModal").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+
+        //初始化选中tab
+        if ('{{api.api_req_param_type }}' === 'raw') {
+            $('#rawBut').click();
+        }
+
+        $('input[name=header_name]').bsSuggest(headerLabelData);
+        $('input[name=api_req_param_type]').click(function () {
+            var type = $(this).val();
+            $('#formDiv').hide();
+            $('#jsonDiv').hide();
+            $('#rawDiv').hide();
+            $('#' + type + 'Div').show();
+        });
+        $('input[name=api_res_param_type]').click(function () {
+            var type = $(this).val();
+            $('#jsonResDiv').hide();
+            $('#rawResDiv').hide();
+            $('#' + type + 'ResDiv').show();
+        });
+
+
+    });
+
+
+</script>
+</body>
+</html>

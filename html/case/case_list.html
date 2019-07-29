@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <!--向左对齐-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        学生管理系统
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
+                        <li><a href="../project/project_detail.html?pid=2">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li><a href="javascript:to_project_detail('{{session.pid}}')">项目概述</a></li>
+                <li><a href="javascript:to_api_list()">接口管理</a></li>
+                <li class="active"><a href="javascript:to_case_list()">用例管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="row">
+                <div class="col-sm-3 col-md-2">
+                    <button type="button" class="btn btn-success" onclick="openGroupModal()">+ 新建分组</button>
+                    <ul class="list-group" style="margin-top: 10px">
+                        <li class="list-group-item">
+                            <b>分组</b>
+                            <a class="badge" onclick="openGroupListModal()">管理</a>
+                        </li>
+                        <a href="./case_list" class="list-group-item {% if not group_id %}active{% endif %}">所有用例</a>
+                        {% for case_group in case_group_list %}
+                        <a href="./case_list?group_id={{case_group.id}}" class="list-group-item {% if group_id==case_group.id %}active{% endif %}">{{case_group.group_name}}</a>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-sm-9 col-md-10">
+                    <div class="container-fluid navbar-default" style="padding-left: 0; margin-bottom: 10px;">
+                        <div class="navbar-header form-inline">
+                            <form action="/case_list">
+                                <button type="button" class="btn btn-success" onclick="openAddCaseModal()">+ 添加用例</button>
+                                <input type="text" class="form-control" name="q" value="{{q}}" placeholder="搜索用例">
+                                <input type="hidden" name="group_id" value="{{ group_id }}">
+                                <button type="submit" class="btn btn-default">搜索</button>
+                            </form>
+                        </div>
+                        <div class="nav navbar-nav navbar-right"></div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="paramTable" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>用例名称</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for case in case_list %}
+                            <tr>
+                                <td>{{case.case_name}}</td>
+                                <td>{{case.update_time}}</td>
+                                <td>
+                                    <button title="详情" type="button" class="btn btn-default btn-sm"
+                                            onclick="to_case_detail('{{case.id}}')">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </button>
+                                    <button title="修改" type="button" class="btn btn-default btn-sm"
+                                            onclick="openEditCaseModal('{{case.id}}')">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                    </button>
+                                    <button title="删除" type="button" class="btn btn-default btn-sm"
+                                            onclick="del_case('{{case.id}}')">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 新增分组 -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!-- 分组列表 -->
+<div class="modal fade" id="groupListModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<div class="modal fade" id="addCaseModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editCaseModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function del_case(id) {
+        if (!confirm('确定删除该用例吗？')) {
+            return false;
+        }
+        $.post('/del_case', {id: id}, function (json) {
+            if (json.code === '0000') {
+                window.location.href = '/case_list?group_id={{ group_id }}';
+            } else {
+                alert(json.msg);
+            }
+        });
+    }
+
+    function openGroupModal() {
+        $("#groupModal").modal({
+            remote: "./add_case_group"
+        });
+    }
+
+    function openGroupListModal() {
+        $("#groupListModal").modal({
+            remote: "./case_group_list"
+        });
+    }
+    function openAddCaseModal() {
+        $("#addCaseModal").modal({
+            remote: "./add_case"
+        });
+    }
+    function openEditCaseModal(case_id) {
+        $("#editCaseModal").modal({
+            remote: "./edit_case?case_id=" + case_id
+        });
+    }
+
+    function save_case_group() {
+        var data = {};
+        data['group_name'] = $('#group_name').val();
+        $.post('./save_case_group', data, function (json) {
+            if (json.code === '0000') {
+                alert('保存成功');
+                $('#groupModal').modal('hide');
+                window.location.href = '/case_list';
+            } else {
+                alert(json.msg);
+            }
+        });
+    }
+
+    function update_case_group(dom, groupId) {
+        var group_name = $(dom).parent().parent().find('input[name=group_name]').val();
+        if (group_name === '') {
+            alert('请填写分组名称！');
+            return false;
+        }
+
+        $.post('/save_case_group', {id: groupId, group_name: group_name}, function (json) {
+            if (json.code === '0000') {
+                isGroupUpdated = true;
+                alert('修改成功');
+            } else {
+                alert(json.msg);
+            }
+        });
+    }
+
+    function del_case_group(dom, groupId) {
+        if (!confirm('确定删除该分组吗？')) {
+            return false;
+        }
+        $.post('/del_case_group', {id: groupId}, function (json) {
+            if (json.code === '0000') {
+                $(dom).parent().parent().remove();
+                isGroupUpdated = true;
+            } else {
+                alert(json.msg);
+            }
+        });
+    }
+
+    function save_case() {
+        var data = {};
+        if ($('#case_id').val() !== '') {
+            data['id'] = $('#case_id').val();
+        }
+        var group_id = $('#group_id').val();
+        data['group_id'] = group_id;
+        data['case_name'] = $('#case_name').val();
+        $.post('/save_case', data, function (json) {
+            if (json.code === '0000') {
+                alert('保存成功');
+                $('#caseModal').modal('hide');
+                window.location.href = '/case_list?group_id=' + group_id;
+            } else {
+                alert(json.msg);
+            }
+        });
+    }
+
+
+
+    function to_edit_api(apiId) {
+        window.location.href = '/edit_api/?apiId=' + apiId;
+    }
+
+
+    function add_api() {
+        window.location.href = '/add_api'
+    }
+
+    function delParamTableTr(dom) {
+        $(dom).parent().parent().remove();
+    }
+
+
+    //分组修改标记
+    var isGroupUpdated = false;
+    $(document).ready(function () {
+        activeMenu('/case_list');
+
+        $("#groupListModal").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+            if (isGroupUpdated) {
+                window.location.href = '/case_list';
+            }
+        });
+
+        $('input[name=headerLabel]').bsSuggest(headerLabelData);
+
+        $('#groupForm').formValidation({
+            //err: {
+            //    container: 'tooltip'
+            //},
+            trigger: 'blur',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                groupName: {
+                    validators: {
+                        notEmpty: {
+                            message: '请填写此字段'
+                        }
+                    }
+                }
+            }
+        });
+        $('#caseForm').formValidation({
+            //err: {
+            //    container: 'tooltip'
+            //},
+            trigger: 'blur',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                caseName: {
+                    validators: {
+                        notEmpty: {
+                            message: '请填写此字段'
+                        }
+                    }
+                }
+            }
+        });
+
+
+    });
+
+    var headerLabelData = {
+        indexId: 0,
+        indexKey: 0,
+        //showBtn: false,
+        allowNoKeyword: false,
+        inputWarnColor: null,
+        ignorecase: true,
+        data: {
+            'value': [
+                {'v': 'Accept'},
+                {'v': 'Accept-Charset'},
+                {'v': 'Accept-Encoding'},
+                {'v': 'Accept-Language'},
+                {'v': 'Accept-Ranges'},
+                {'v': 'Authorization'},
+                {'v': 'Cache-Control'},
+                {'v': 'Connection'},
+                {'v': 'Cookie'},
+                {'v': 'Content-Length'},
+                {'v': 'Content-Type'},
+                {'v': 'Content-MD5'},
+                {'v': 'Date'},
+                {'v': 'Expect'},
+                {'v': 'From'},
+                {'v': 'Host'},
+                {'v': 'If-Match'},
+                {'v': 'If-Modified-Since'},
+                {'v': 'If-None-Match'},
+                {'v': 'If-Range'},
+                {'v': 'If-Unmodified-Since'},
+                {'v': 'Max-Forwards'},
+                {'v': 'Origin'},
+                {'v': 'Pragma'},
+                {'v': 'Proxy-Authorization'},
+                {'v': 'Range'},
+                {'v': 'Referer'},
+                {'v': 'TE'},
+                {'v': 'Upgrade'},
+                {'v': 'User-Agent'},
+                {'v': 'Via'},
+                {'v': 'Warning'}
+            ]
+        }
+    };
+
+</script>
+</body>
+</html>

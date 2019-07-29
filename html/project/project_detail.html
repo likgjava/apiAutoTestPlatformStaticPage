@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>接口自动化测试平台</title>
+    <!-- js plugin css -->
+    <link href="../../static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom style -->
+    <link href="../../static/css/main.css" rel="stylesheet">
+    <!-- js plugin -->
+    <script type="text/javascript" src="../../static/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/suggest/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript" src="../../static/js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">接口自动化测试平台</a>
+        </div>
+        <div>
+            <!--向左对齐-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        学生管理系统<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:to_project_detail(1)">学生管理系统</a></li>
+                        <li><a href="javascript:to_project_detail(2)">测试系统</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="nav-sidebar">
+                <li class="active"><a href="javascript:to_project_detail('{{project.id}}')">项目概述</a></li>
+                <li><a href="javascript:to_api_list()">接口管理</a></li>
+                <li><a href="javascript:to_case_list()">用例管理</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+            <div class="container-fluid" style="padding-left: 0; margin-bottom: 10px;">
+                <div class="navbar-header">
+                    <button type="button" class="btn btn-default" onclick="to_project_list()">&lt; 项目列表</button>
+                </div>
+                <div class="nav navbar-nav navbar-right"></div>
+            </div>
+
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <td colspan="4" class="title-pname">学生管理系统</td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="title-p">V1.0</p>
+                        <p class="desc-p">版本号</p>
+                    </td>
+                    <td>
+                        <p class="title-p">20</p>
+                        <p class="desc-p">接口总数</p>
+                    </td>
+                    <td>
+                        <p class="title-p">30</p>
+                        <p class="desc-p">用例总数</p>
+                    </td>
+                    <td>
+                        <p class="title-p">2019-06-01 13:20:20</p>
+                        <p class="desc-p">最后更新日期</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // activeMenu('/project_info');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">绑定参数值</h4>
+</div>
+<div class="modal-body">
+    <div class="row" style="height:300px;overflow:auto; ">
+        <div class="col-md-3 column">
+            <ul class="list-group" style="margin-top: 10px">
+                {% for case_item in case_item_list %}
+                <a href="javascript:" onclick="showParams(this,'{{case_item.id}}')"
+                   class="list-group-item {% if loop.index==1 %}active{%endif%}">{{case_item.api_name}}</a>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-9 column" id="paramListDiv">
+            {% for case_item in case_item_list %}
+            <ul class="list-group" style="margin-top: 10px; {% if loop.index>1 %}display: none{%endif%}"
+                id="params{{case_item.id}}">
+                {% for param in case_item.api_res_param_list %}
+                <a class="list-group-item" href="javascript:;"
+                   onclick="selectedParam('{{index}}','{{ type }}','{{case_item.id}}','{{ param }}')">{{ param }}</a>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
