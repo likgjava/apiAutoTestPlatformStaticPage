@@ -24,8 +24,7 @@
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        学生管理系统
-                        <b class="caret"></b>
+                        学生管理系统<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
@@ -50,16 +49,15 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div class="row">
                 <div class="col-sm-3 col-md-2">
-                    <button type="button" class="btn btn-success" onclick="openGroupModal()">+ 新建分组</button>
+                    <button type="button" class="btn btn-success" onclick="openAddGroupModal()">+ 新建分组</button>
                     <ul class="list-group" style="margin-top: 10px">
                         <li class="list-group-item">
                             <b>分组</b>
                             <a class="badge" onclick="openGroupListModal()">管理</a>
                         </li>
-                        <a href="./case_list" class="list-group-item {% if not group_id %}active{% endif %}">所有用例</a>
-                        {% for case_group in case_group_list %}
-                        <a href="./case_list?group_id={{case_group.id}}" class="list-group-item {% if group_id==case_group.id %}active{% endif %}">{{case_group.group_name}}</a>
-                        {% endfor %}
+                        <a href="./case_list" class="list-group-item active">所有用例</a>
+                        <a href="./case_list?group_id={{case_group.id}}" class="list-group-item ">学院管理模块</a>
+                        <a href="./case_list?group_id={{case_group.id}}" class="list-group-item ">学生管理模块</a>
                     </ul>
                 </div>
 
@@ -86,10 +84,9 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for case in case_list %}
                             <tr>
-                                <td>{{case.case_name}}</td>
-                                <td>{{case.update_time}}</td>
+                                <td>登录</td>
+                                <td>2019-10-10 10:10:10</td>
                                 <td>
                                     <button title="详情" type="button" class="btn btn-default btn-sm"
                                             onclick="to_case_detail('{{case.id}}')">
@@ -105,7 +102,6 @@
                                     </button>
                                 </td>
                             </tr>
-                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -117,7 +113,7 @@
 
 
 <!-- 新增分组 -->
-<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
@@ -129,13 +125,13 @@
         <div class="modal-content"></div>
     </div>
 </div>
-<div class="modal fade" id="addCaseModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel" aria-hidden="true">
+<div class="modal fade" id="addCaseModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
     </div>
 </div>
-<div class="modal fade" id="editCaseModal" tabindex="-1" role="dialog" aria-labelledby="caseModalLabel" aria-hidden="true">
+<div class="modal fade" id="editCaseModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
@@ -156,25 +152,25 @@
         });
     }
 
-    function openGroupModal() {
-        $("#groupModal").modal({
-            remote: "./add_case_group"
+    function openAddGroupModal() {
+        $("#groupModal").removeData("bs.modal").modal({
+            remote: "./add_case_group.html"
         });
     }
 
     function openGroupListModal() {
-        $("#groupListModal").modal({
-            remote: "./case_group_list"
+        $("#groupListModal").removeData("bs.modal").modal({
+            remote: "./case_group_list.html"
         });
     }
     function openAddCaseModal() {
-        $("#addCaseModal").modal({
-            remote: "./add_case"
+        $("#addCaseModal").removeData("bs.modal").modal({
+            remote: "./add_case.html"
         });
     }
     function openEditCaseModal(case_id) {
-        $("#editCaseModal").modal({
-            remote: "./edit_case?case_id=" + case_id
+        $("#editCaseModal").removeData("bs.modal").modal({
+            remote: "./edit_case.html?case_id=" + case_id
         });
     }
 
@@ -242,22 +238,6 @@
         });
     }
 
-
-
-    function to_edit_api(apiId) {
-        window.location.href = '/edit_api/?apiId=' + apiId;
-    }
-
-
-    function add_api() {
-        window.location.href = '/add_api'
-    }
-
-    function delParamTableTr(dom) {
-        $(dom).parent().parent().remove();
-    }
-
-
     //分组修改标记
     var isGroupUpdated = false;
     $(document).ready(function () {
@@ -269,98 +249,7 @@
                 window.location.href = '/case_list';
             }
         });
-
-        $('input[name=headerLabel]').bsSuggest(headerLabelData);
-
-        $('#groupForm').formValidation({
-            //err: {
-            //    container: 'tooltip'
-            //},
-            trigger: 'blur',
-            icon: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                groupName: {
-                    validators: {
-                        notEmpty: {
-                            message: '请填写此字段'
-                        }
-                    }
-                }
-            }
-        });
-        $('#caseForm').formValidation({
-            //err: {
-            //    container: 'tooltip'
-            //},
-            trigger: 'blur',
-            icon: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                caseName: {
-                    validators: {
-                        notEmpty: {
-                            message: '请填写此字段'
-                        }
-                    }
-                }
-            }
-        });
-
-
     });
-
-    var headerLabelData = {
-        indexId: 0,
-        indexKey: 0,
-        //showBtn: false,
-        allowNoKeyword: false,
-        inputWarnColor: null,
-        ignorecase: true,
-        data: {
-            'value': [
-                {'v': 'Accept'},
-                {'v': 'Accept-Charset'},
-                {'v': 'Accept-Encoding'},
-                {'v': 'Accept-Language'},
-                {'v': 'Accept-Ranges'},
-                {'v': 'Authorization'},
-                {'v': 'Cache-Control'},
-                {'v': 'Connection'},
-                {'v': 'Cookie'},
-                {'v': 'Content-Length'},
-                {'v': 'Content-Type'},
-                {'v': 'Content-MD5'},
-                {'v': 'Date'},
-                {'v': 'Expect'},
-                {'v': 'From'},
-                {'v': 'Host'},
-                {'v': 'If-Match'},
-                {'v': 'If-Modified-Since'},
-                {'v': 'If-None-Match'},
-                {'v': 'If-Range'},
-                {'v': 'If-Unmodified-Since'},
-                {'v': 'Max-Forwards'},
-                {'v': 'Origin'},
-                {'v': 'Pragma'},
-                {'v': 'Proxy-Authorization'},
-                {'v': 'Range'},
-                {'v': 'Referer'},
-                {'v': 'TE'},
-                {'v': 'Upgrade'},
-                {'v': 'User-Agent'},
-                {'v': 'Via'},
-                {'v': 'Warning'}
-            ]
-        }
-    };
-
 </script>
 </body>
 </html>

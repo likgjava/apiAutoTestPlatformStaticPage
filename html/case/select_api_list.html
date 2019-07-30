@@ -6,25 +6,22 @@
     <div class="row" style="height:300px;overflow:auto; ">
         <div class="col-md-3 column">
             <ul class="list-group" style="margin-top: 10px">
-                <a href="javascript:;" onclick="reloadSelectApiList()" class="list-group-item {% if not group_id %}active{% endif %}">所有接口</a>
-                {% for api_group in api_group_list %}
-                <a href="javascript:;" onclick="reloadSelectApiList('{{api_group.id}}')" class="list-group-item {% if api_group.id==group_id %}active{% endif %}">{{api_group.group_name}}</a>
-                {% endfor %}
+                <a href="javascript:;" onclick="reloadSelectApiList()" class="list-group-item active">所有接口</a>
+                <a href="javascript:;" onclick="reloadSelectApiList('{{api_group.id}}')" class="list-group-item">学院管理</a>
+                <a href="javascript:;" onclick="reloadSelectApiList('{{api_group.id}}')" class="list-group-item">学生管理</a>
             </ul>
         </div>
         <div class="col-md-9 column">
             <table id="paramTable" class="table table-striped">
                 <tbody>
-                {% for api in api_list %}
                 <tr>
-                    <td>{{api.api_name}}</td>
-                    <td><span class="label label-success">{{api.api_method}}</span></td>
-                    <td>{{api.api_url}}</td>
+                    <td>添加学生</td>
+                    <td><span class="label label-success">POST</span></td>
+                    <td>/stu/add_stu</td>
                     <td>
                         <button type="button" class="btn btn-primary" onclick="selectedApi('{{api.id}}')">确认</button>
                     </td>
                 </tr>
-                {% endfor %}
                 </tbody>
             </table>
         </div>

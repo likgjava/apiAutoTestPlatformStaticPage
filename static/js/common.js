@@ -1,20 +1,10 @@
-function activeMenu(path) {
-    $('#nav-sidebar').parent().find('li a').each(function (i, dom) {
-        if ($(dom).attr('href').indexOf(path) !== -1) {
-            $('#nav-sidebar').parent().find('li').removeClass('active');
-            $(dom).parent().addClass('active');
-            return false;
-        }
-    });
-}
-
 // ===========================项目管理===============================
 function to_project_list() {
-    window.location.href = './project_list.html'
+    window.location.href = '../project/project_list.html'
 }
 
 function to_project_detail(pId) {
-    window.location.href = './project_detail.html?pid=' + pId;
+    window.location.href = '../project/project_detail.html?pid=' + pId;
 }
 
 function del_project(id) {
@@ -55,7 +45,7 @@ function save_project() {
 
 // ===========================接口管理===============================
 function to_api_list(group_id) {
-    url = './api_list.html';
+    url = '../api/api_list.html';
     if (group_id) {
         url += '?group_id=' + group_id
     }
@@ -165,7 +155,7 @@ function save_api() {
 
 // ===========================用例管理===============================
 function to_case_list() {
-    window.location.href = './case_list.html'
+    window.location.href = '../case/case_list.html'
 }
 
 function to_case_detail(id) {
@@ -174,6 +164,10 @@ function to_case_detail(id) {
 
 function to_add_case_item(case_id) {
     window.location.href = './add_case_item.html?case_id=' + case_id;
+}
+
+function to_edit_case_item(item_id) {
+    window.location.href = './edit_case_item.html?item_id=' + item_id;
 }
 
 function del_case_item(case_id, item_id) {
@@ -300,6 +294,15 @@ function select_check_type(dom, type) {
     }
 }
 
+function changeHeaderValue(dom) {
+    var nextTr = $(dom).parent().parent().next();
+    if ($(dom).val() !== '' && nextTr.html() == null) {
+        $(dom).parent().parent().find('td:last').show();
+        $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
+        $(dom).parent().parent().parent().find('input[name=header_name]').bsSuggest(headerLabelData);
+    }
+}
+
 function changeRelationParamValue(dom) {
     var nextTr = $(dom).parent().parent().next();
     if ($(dom).val() !== '' && nextTr.html() == null) {
@@ -313,6 +316,14 @@ function changeParamValue(dom) {
     if ($(dom).val() !== '' && nextTr.html() == null) {
         $(dom).parent().parent().find('td:last').show();
         $(dom).parent().parent().parent().append($('#paramTrTemplate').html());
+    }
+}
+
+function changeJsonCheckValue(dom) {
+    var nextTr = $(dom).parent().parent().next();
+    if ($(dom).val() !== '' && nextTr.html() == null) {
+        $(dom).parent().parent().find('td:last').show();
+        $(dom).parent().parent().parent().append($('#jsonCheckTrTemplate').html());
     }
 }
 
@@ -343,6 +354,16 @@ function delThisTr(dom) {
     $(dom).parent().parent().remove();
 }
 
+
+function activeMenu(path) {
+    $('#nav-sidebar').parent().find('li a').each(function (i, dom) {
+        if ($(dom).attr('href').indexOf(path) !== -1) {
+            $('#nav-sidebar').parent().find('li').removeClass('active');
+            $(dom).parent().addClass('active');
+            return false;
+        }
+    });
+}
 
 // ==================================================================
 var headerLabelData = {

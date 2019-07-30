@@ -24,8 +24,7 @@
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        学生管理系统
-                        <b class="caret"></b>
+                        学生管理系统<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
@@ -70,17 +69,17 @@
                     <div class="row clearfix">
                         <div class="col-md-10 column">
                             <div>
-                                <span class="label label-success">{{api.api_protocol}}</span>
-                                {{api.api_url}}
+                                <span class="label label-success">HTTP</span>
+                                /stu/get_stu
                             </div>
                             <div>
-                                <span class="label label-primary">{{api.api_method}}</span>
-                                {{api.api_name}}
+                                <span class="label label-primary">GET</span>
+                                查询学生信息
                             </div>
                         </div>
                         <div class="col-md-2 column" style="text-align: right">
-                            <div>{{api.group_name}}</div>
-                            <div>{{api.update_time}}</div>
+                            <div>学生管理</div>
+                            <div>2019-10-10 09:10:10</div>
                         </div>
                     </div>
                 </div>
@@ -98,22 +97,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for header in api_header_list%}
                         <tr>
-                            <td>{{loop.index}}</td>
-                            <td>{{header.header_name}}</td>
-                            <td>{{header.header_value}}</td>
+                            <td>1</td>
+                            <td>Content-Type</td>
+                            <td>application/json</td>
                         </tr>
-                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading">请求参数[{{api.api_req_param_type}}]</div>
+                <div class="panel-heading">请求参数[form]</div>
                 <div class="panel-body">
-                    {% if api.api_req_param_type == 'form' %}
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -123,16 +119,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for k,v in api_req_param_form.items() %}
                         <tr>
-                            <td>{{loop.index}}</td>
-                            <td>{{k}}</td>
-                            <td>{{v}}</td>
+                            <td>1</td>
+                            <td>name</td>
+                            <td>tom</td>
                         </tr>
-                        {% endfor %}
                         </tbody>
                     </table>
-                    {% elif api.api_req_param_type == 'json' %}
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -142,25 +135,20 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for k,v in api_req_param_json.items() %}
                         <tr>
-                            <td>{{loop.index}}</td>
-                            <td>{{k}}</td>
-                            <td>{{v}}</td>
+                            <td>1</td>
+                            <td>x</td>
+                            <td>1</td>
                         </tr>
-                        {% endfor %}
                         </tbody>
                     </table>
-                    {% else %}
-                    {{api_req_param_raw}}
-                    {% endif %}
+                    <span>{"x":1, "y":2}</span>
                 </div>
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading">返回参数[{{api.api_res_param_type}}]</div>
+                <div class="panel-heading">返回参数[json]</div>
                 <div class="panel-body">
-                    {% if api.api_res_param_type == 'json' %}
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -170,18 +158,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for k,v in api_res_param_json.items() %}
                         <tr>
-                            <td>{{loop.index}}</td>
-                            <td>{{k}}</td>
-                            <td>{{v}}</td>
+                            <td>1</td>
+                            <td>success</td>
+                            <td>true</td>
                         </tr>
-                        {% endfor %}
                         </tbody>
                     </table>
-                    {% else %}
-                        {{api_res_param_raw}}
-                    {% endif %}
+                    <span>操作成功！</span>
                 </div>
             </div>
 
@@ -199,10 +183,10 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="panel-success">
-                                <pre style="margin-top: 10px">{{api.api_success_mock}}</pre>
+                                <pre style="margin-top: 10px">{"success":true}</pre>
                             </div>
                             <div class="tab-pane" id="panel-failure">
-                                <pre style="margin-top: 10px">{{api.api_failure_mock}}</pre>
+                                <pre style="margin-top: 10px">{"success":false}</pre>
                             </div>
                         </div>
                     </div>

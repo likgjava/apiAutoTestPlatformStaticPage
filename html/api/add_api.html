@@ -329,49 +329,6 @@
 </table>
 
 <script type="text/javascript">
-    function changeMethod(dom) {
-        var rawBut = $('#rawBut');
-        if ($(dom).val() === 'POST') {
-            rawBut.show();
-        } else {
-            rawBut.hide();
-            if (rawBut.hasClass('btn-success')) {
-                rawBut.siblings().click();
-            }
-        }
-    }
-
-    function selectRequestParamTab(dom, type) {
-        $(dom).removeClass('btn-default').addClass('btn-success');
-        $(dom).siblings().removeClass('btn-success').addClass('btn-default');
-        if (type === 'form') {
-            $('#paramTable').parent().show();
-            $('#rawDiv').hide();
-        } else {
-            $('#paramTable').parent().hide();
-            $('#rawDiv').show();
-        }
-    }
-
-    function changeHeaderValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
-
-            $(dom).parent().parent().parent().find('input[name=headerLabel]').bsSuggest(headerLabelData);
-        }
-    }
-
-    function changeParamValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#paramTrTemplate').html());
-        }
-    }
-
-
     $(document).ready(function () {
         $('input[name=header_name]').bsSuggest(headerLabelData);
         $('input[name=api_req_param_type]').click(function () {

@@ -104,14 +104,14 @@
 
 <script type="text/javascript">
     function openAddProjectModal() {
-        $("#addProjectModal").modal({
-            remote: "./add_project"
+        $("#addProjectModal").removeData('bs.modal').modal({
+            remote: "./add_project.html"
         });
     }
 
     function openEditProjectModal(pid) {
-        $("#editProjectModal").modal({
-            remote: "./edit_project?pid=" + pid
+        $("#editProjectModal").removeData('bs.modal').modal({
+            remote: "./edit_project.html?pid=" + pid
         });
     }
 

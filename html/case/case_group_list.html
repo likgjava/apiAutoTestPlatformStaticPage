@@ -11,10 +11,9 @@
         </tr>
         </thead>
         <tbody>
-        {% for case_group in case_group_list %}
         <tr>
             <td>
-                <input type="text" class="form-control" name="group_name" value="{{case_group.group_name}}" placeholder="分组名称">
+                <input type="text" class="form-control" name="group_name" value="学院管理模块" placeholder="分组名称">
             </td>
             <td>
                 <button title="提交" type="button" class="btn btn-default btn-sm" onclick="update_case_group(this, '{{case_group.id}}')">
@@ -25,7 +24,6 @@
                 </button>
             </td>
         </tr>
-        {% endfor %}
         </tbody>
     </table>
 </div>

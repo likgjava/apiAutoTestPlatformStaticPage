@@ -24,8 +24,7 @@
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        学生管理系统
-                        <b class="caret"></b>
+                        学生管理系统<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
@@ -77,12 +76,12 @@
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="api_url">URL</label>
-                            <input type="text" class="form-control" id="api_url" placeholder="请输入URI" value="{{api.api_url}}"
+                            <input type="text" class="form-control" id="api_url" placeholder="请输入URL" value="127.0.0.1/stu/get_stu"
                                    style="width: 500px;">
                         </div>
                         <div class="form-group">
                             <label class="sr-only" for="api_method">请求方式</label>
-                            <select class="form-control" id="api_method" onchange="changeMethod(this)">
+                            <select class="form-control" id="api_method">
                                 <option value="POST" {% if api.api_method=='POST' %}selected{% endif %}>POST</option>
                                 <option value="GET" {% if api.api_method=='GET' %}selected{% endif %}>GET</option>
                             </select>
@@ -104,12 +103,11 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for header in api_header_list%}
                         <tr>
                             <td>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="header_name"
-                                           value="{{header.header_name}}" placeholder="头部标签">
+                                           value="area" placeholder="头部标签">
                                     <div class="input-group-btn">
                                         <button type="button" class="btn btn-default dropdown-toggle"
                                                 data-toggle="dropdown">
@@ -121,14 +119,13 @@
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="header_value"
-                                       value="{{header.header_value}}" onkeyup="changeHeaderValue(this)"
+                                       value="010" onkeyup="changeHeaderValue(this)"
                                        placeholder="头部内容">
                             </td>
                             <td>
                                 <a onclick="delThisTr(this)">删除</a>
                             </td>
                         </tr>
-                        {% endfor %}
 
                         <tr>
                             <td>
@@ -181,20 +178,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_req_param_form.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}" placeholder="参数名">
+                                    <input type="text" class="form-control" name="name" value="name" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="tom"
                                            onkeyup="changeParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
 
                             <tr>
                                 <td>
@@ -221,20 +216,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_req_param_json.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}" placeholder="参数名">
+                                    <input type="text" class="form-control" name="name" value="x" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="1"
                                            onkeyup="changeParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
 
                             <tr>
                                 <td>
@@ -254,7 +247,7 @@
 
                     <div id="rawDiv" style="display: none; margin-top: 10px;">
                         <textarea id="raw" class="form-control" rows="4"
-                                  placeholder="源数据">{{api_req_param_raw}}</textarea>
+                                  placeholder="源数据">{"x":1}</textarea>
                     </div>
                 </div>
             </div>
@@ -339,36 +332,6 @@
 </table>
 
 <script type="text/javascript">
-    function changeMethod(dom) {
-        var rawBut = $('#rawBut');
-        if ($(dom).val() === 'POST') {
-            rawBut.show();
-        } else {
-            rawBut.hide();
-            if (rawBut.hasClass('btn-success')) {
-                rawBut.siblings().click();
-            }
-        }
-    }
-
-    function changeHeaderValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
-
-            $(dom).parent().parent().parent().find('input[name=headerLabel]').bsSuggest(headerLabelData);
-        }
-    }
-
-    function changeParamValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#paramTrTemplate').html());
-        }
-    }
-
     function send_request() {
         var data = {};
         data['api_protocol'] = $('#api_protocol').val();
@@ -448,9 +411,7 @@
 
         //初始化选中tab
         $('input[name=api_req_param_type][value="{{ api.api_req_param_type }}"]').click();
-
     });
-
 </script>
 </body>
 </html>

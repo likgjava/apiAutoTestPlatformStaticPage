@@ -11,10 +11,9 @@
         </tr>
         </thead>
         <tbody>
-        {% for api_group in api_group_list%}
         <tr>
             <td>
-                <input type="text" class="form-control" name="group_name" value="{{api_group.group_name}}" placeholder="分组名称"/>
+                <input type="text" class="form-control" name="group_name" value="学院管理" placeholder="分组名称"/>
             </td>
             <td>
                 <button title="提交" type="button" class="btn btn-default btn-sm" onclick="update_api_group(this, '{{api_group.id}}')">
@@ -25,7 +24,19 @@
                 </button>
             </td>
         </tr>
-        {% endfor %}
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="group_name" value="学生管理" placeholder="分组名称"/>
+            </td>
+            <td>
+                <button title="提交" type="button" class="btn btn-default btn-sm" onclick="update_api_group(this, '{{api_group.id}}')">
+                    <span class="glyphicon glyphicon-ok"></span>
+                </button>
+                <button title="删除" type="button" class="btn btn-default btn-sm" onclick="del_api_group(this, '{{api_group.id}}')">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>

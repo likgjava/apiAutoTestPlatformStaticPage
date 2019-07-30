@@ -24,8 +24,7 @@
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        学生管理系统
-                        <b class="caret"></b>
+                        学生管理系统<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
@@ -76,12 +75,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for case_item in case_item_list %}
                 <tr>
-                    <td>{{loop.index}}</td>
-                    <td>{{case_item.api_name}}</td>
-                    <td><span class="label label-success">{{case_item.api_method}}</span></td>
-                    <td>{{case_item.api_url}}</td>
+                    <td>1</td>
+                    <td>登录</td>
+                    <td><span class="label label-success">POST</span></td>
+                    <td>/sys/login</td>
                     <td data-name="result">尚无测试结果</td>
                     <td>
                         <button title="测试" type="button" class="btn btn-default btn-sm" onclick="auto_test(this, '{{case_item.id}}')">
@@ -95,7 +93,6 @@
                         </button>
                     </td>
                 </tr>
-                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -121,15 +118,9 @@
         $("#selectApiListModal").modal('hide');
     }
 
-    function to_edit_case_item(item_id) {
-        window.location.href = './edit_case_item?item_id=' + item_id;
-    }
-
-
-
     function openSelectApiListModal() {
-        $("#selectApiListModal").modal({
-            remote: "./select_api_list"
+        $("#selectApiListModal").removeData("bs.modal").modal({
+            remote: "./select_api_list.html"
         });
     }
 
@@ -184,111 +175,14 @@
         });
     }
 
-
     function viewTestResult(item_result_id) {
-        $("#testResultModal").modal({
+        $("#testResultModal").removeData("bs.modal").modal({
             remote: "/test_result?id=" + item_result_id
         });
     }
 
-    function selectRequestParamTab(dom, type) {
-        $(dom).removeClass('btn-default').addClass('btn-success');
-        $(dom).siblings().removeClass('btn-success').addClass('btn-default');
-        if (type === 'form') {
-            $('#paramTable').parent().show();
-            $('#rawDiv').hide();
-        } else {
-            $('#paramTable').parent().hide();
-            $('#rawDiv').show();
-        }
-    }
-
-    function changeHeaderValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
-
-            $(dom).parent().parent().parent().find('input[name=headerLabel]').bsSuggest(headerLabelData);
-        }
-    }
-
-    function changeParamValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#paramTrTemplate').html());
-        }
-    }
-
-    function add_api() {
-        window.location.href = '/add_api'
-    }
-
-    function delParamTableTr(dom) {
-        $(dom).parent().parent().remove();
-    }
-
-
     $(document).ready(function () {
-        activeMenu('/case_list');
-
-        $("#selectApiListModal").on("hidden.bs.modal", function () {
-            $(this).removeData("bs.modal");
-        });
-        $("#testResultModal").on("hidden.bs.modal", function () {
-            $(this).removeData("bs.modal");
-        });
-
-        $('input[name=headerLabel]').bsSuggest(headerLabelData);
-
     });
-
-    var headerLabelData = {
-        indexId: 0,
-        indexKey: 0,
-        //showBtn: false,
-        allowNoKeyword: false,
-        inputWarnColor: null,
-        ignorecase: true,
-        data: {
-            'value': [
-                {'v': 'Accept'},
-                {'v': 'Accept-Charset'},
-                {'v': 'Accept-Encoding'},
-                {'v': 'Accept-Language'},
-                {'v': 'Accept-Ranges'},
-                {'v': 'Authorization'},
-                {'v': 'Cache-Control'},
-                {'v': 'Connection'},
-                {'v': 'Cookie'},
-                {'v': 'Content-Length'},
-                {'v': 'Content-Type'},
-                {'v': 'Content-MD5'},
-                {'v': 'Date'},
-                {'v': 'Expect'},
-                {'v': 'From'},
-                {'v': 'Host'},
-                {'v': 'If-Match'},
-                {'v': 'If-Modified-Since'},
-                {'v': 'If-None-Match'},
-                {'v': 'If-Range'},
-                {'v': 'If-Unmodified-Since'},
-                {'v': 'Max-Forwards'},
-                {'v': 'Origin'},
-                {'v': 'Pragma'},
-                {'v': 'Proxy-Authorization'},
-                {'v': 'Range'},
-                {'v': 'Referer'},
-                {'v': 'TE'},
-                {'v': 'Upgrade'},
-                {'v': 'User-Agent'},
-                {'v': 'Via'},
-                {'v': 'Warning'}
-            ]
-        }
-    };
-
 </script>
 </body>
 </html>

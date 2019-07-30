@@ -24,8 +24,7 @@
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        学生管理系统
-                        <b class="caret"></b>
+                        学生管理系统<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
@@ -67,13 +66,13 @@
                         <div class="form-group">
                             <label for="api_name" class="col-sm-2 control-label">接口名称：</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="api_name" value="{{case_item.api_name}}">
+                                <input type="text" class="form-control" id="api_name" value="登录">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="api_url" class="col-sm-2 control-label">请求地址：</label>
                             <div class="col-sm-2">
-                                <select class="form-control" id="api_method" onchange="changeMethod(this)">
+                                <select class="form-control" id="api_method">
                                     <option value="POST" {% if case_item.api_method=='POST' %}selected{% endif %}>POST
                                     </option>
                                     <option value="GET" {% if case_item.api_method=='GET' %}selected{% endif %}>GET
@@ -91,7 +90,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="api_url" value="{{case_item.api_url}}"
+                                <input type="text" class="form-control" id="api_url" value="/sys/login"
                                        placeholder="测试地址">
                             </div>
                         </div>
@@ -111,25 +110,22 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for api_header in api_header_list %}
                         <tr>
                             <td>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="name" placeholder="头部标签"
-                                           value="{{api_header.header_name}}">
+                                           value="area">
                                 </div>
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="value"
-                                       onkeyup="changeHeaderValue(this)" placeholder="头部内容"
-                                       value="{{api_header.header_value}}">
+                                <input type="text" class="form-control" name="value" placeholder="头部内容"
+                                       onkeyup="changeHeaderValue(this)" value="010">
                             </td>
                             <td>
                                 <a onclick="openBindParamModal(this, 'header')">关联</a>
                                 <a onclick="delThisTr(this)">删除</a>
                             </td>
                         </tr>
-                        {% endfor %}
 
                         <!--空数据-->
                         <tr>
@@ -177,14 +173,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_req_param_form.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}"
+                                    <input type="text" class="form-control" name="name" value="username"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="tom"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
@@ -192,7 +187,6 @@
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
 
                             <tr>
                                 <td>
@@ -221,14 +215,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_req_param_json.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}"
+                                    <input type="text" class="form-control" name="name" value="username"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="tom"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
@@ -236,7 +229,6 @@
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
 
                             <tr>
                                 <td>
@@ -258,7 +250,7 @@
 
                     <div id="rawDiv" style="display: none; margin-top: 10px;">
                         <textarea id="raw" class="form-control" rows="4"
-                                  placeholder="源数据">{{api_req_param_raw}}</textarea>
+                                  placeholder="源数据">{"username":"tom"}</textarea>
                     </div>
                 </div>
             </div>
@@ -284,20 +276,19 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_res_param_json.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}" placeholder="参数名">
+                                    <input type="text" class="form-control" name="name" value="success" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="true"
                                            onkeyup="changeParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
+
                             <tr>
                                 <td>
                                     <input type="text" class="form-control" name="name" placeholder="参数名">
@@ -315,7 +306,7 @@
                     </div>
 
                     <div id="rawResDiv" style="display: none; margin-top: 10px;">
-                        <textarea id="resRaw" class="form-control" rows="4" placeholder="源数据">{{api_res_param_raw}}</textarea>
+                        <textarea id="resRaw" class="form-control" rows="4" placeholder="源数据">{"success":true}</textarea>
                     </div>
                 </div>
             </div>
@@ -340,7 +331,7 @@
                     </div>
 
                     <div class="form-inline" id="statusCodeDiv" style="margin-top: 10px; display: none;">
-                        <input type="text" class="form-control" id="check_status_code" value="{{ case_item.check_status_code }}"
+                        <input type="text" class="form-control" id="check_status_code" value="200"
                                placeholder="响应状态码">
                     </div>
 
@@ -354,10 +345,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for rule in check_rule_list %}
                         <tr>
                             <td>
-                                <input type="text" class="form-control" name="key" value="{{rule.key}}"
+                                <input type="text" class="form-control" name="key" value="code"
                                        onkeyup="changeJsonCheckValue(this)" placeholder="参数名">
                             </td>
                             <td>
@@ -371,16 +361,13 @@
                                 </select>
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="value" value="{{rule.value}}"
+                                <input type="text" class="form-control" name="value" value="1000"
                                        onkeyup="changeJsonCheckValue(this)" placeholder="校验值">
                             </td>
-                            <td style="display: none">
-                                <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
+                            <td>
+                                <a onclick="delThisTr(this)">删除</a>
                             </td>
                         </tr>
-                        {% endfor %}
 
                         <tr>
                             <td>
@@ -402,16 +389,14 @@
                                        onkeyup="changeJsonCheckValue(this)" placeholder="校验值">
                             </td>
                             <td style="display: none">
-                                <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
+                                <a onclick="delThisTr(this)">删除</a>
                             </td>
                         </tr>
                         </tbody>
                     </table>
 
                     <div id="textCheckDiv" style="display: none; margin-top: 10px;">
-                        <textarea id="textCheck" class="form-control" rows="4" placeholder="校验表达式">{% if case_item.check_type==1 or case_item.check_type==2%}{{ case_item.check_rule }}{%endif%}</textarea>
+                        <textarea id="textCheck" class="form-control" rows="4" placeholder="校验表达式">1111</textarea>
                     </div>
                 </div>
             </div>
@@ -498,9 +483,7 @@
                    placeholder="校验值">
         </td>
         <td style="display: none">
-            <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
-                <span class="glyphicon glyphicon-trash"></span>
-            </button>
+            <a onclick="delThisTr(this)">删除</a>
         </td>
     </tr>
     </tbody>
@@ -519,94 +502,12 @@
             type = "param"
         }
         var index = $(dom).parent().parent().index();
-        $("#bindParamModal").modal({
+        $("#bindParamModal").removeData("bs.modal").modal({
             remote: "/bind_param?case_id={{ case_item.case_id }}&item_id=" + $('#itemId').val() + '&index=' + index + '&type=' + type
         });
     }
 
-    function changeMethod(dom) {
-        var rawBut = $('#rawBut');
-        if ($(dom).val() === 'POST') {
-            rawBut.show();
-        } else {
-            rawBut.hide();
-            if (rawBut.hasClass('btn-success')) {
-                rawBut.siblings().click();
-            }
-        }
-    }
-
-    function selectRequestParamTab(dom, type) {
-        $(dom).removeClass('btn-default').addClass('btn-success');
-        $(dom).siblings().removeClass('btn-success').addClass('btn-default');
-        if (type === 'form') {
-            $('#paramTable').parent().show();
-            $('#rawDiv').hide();
-        } else {
-            $('#paramTable').parent().hide();
-            $('#rawDiv').show();
-        }
-    }
-
-
-    function changeHeaderValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
-
-            $(dom).parent().parent().parent().find('input[name=headerLabel]').bsSuggest(headerLabelData);
-        }
-    }
-
-    function changeParamValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#paramTrTemplate').html());
-        }
-    }
-
-    function changeJsonCheckValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#jsonCheckTrTemplate').html());
-        }
-    }
-
-    function changeStatusCode(dom) {
-        if ($(dom).val() === '0') {
-            $('#customStatusCode').show();
-        } else {
-            $('#customStatusCode').hide();
-        }
-    }
-
-
-    function delParamTableTr(dom) {
-        $(dom).parent().parent().remove();
-    }
-
-    function showParams(dom, itemId) {
-        $(dom).siblings().removeClass('active');
-        $(dom).addClass('active');
-        var paramListDiv = $('#paramListDiv');
-        paramListDiv.find('ul').hide();
-        paramListDiv.find('ul[id=params' + itemId + ']').show();
-    }
-
-
-
-
     $(document).ready(function () {
-        // activeMenu('/case_list');
-
-        $("#bindParamModal").on("hidden.bs.modal", function () {
-            $(this).removeData("bs.modal");
-        });
-
-
         $('input[name=header_name]').bsSuggest(headerLabelData);
         $('input[name=api_req_param_type]').click(function () {
             var type = $(this).val();
@@ -626,10 +527,7 @@
         $('input[name=api_req_param_type][value="{{api_req_param_type}}"]').click();
         $('input[name=api_res_param_type][value="{{api_res_param_type}}"]').click();
         $('input[name=check_type][value="{{case_item.check_type}}"]').click();
-
     });
-
-
 </script>
 </body>
 </html>

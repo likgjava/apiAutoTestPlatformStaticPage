@@ -24,8 +24,7 @@
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        学生管理系统
-                        <b class="caret"></b>
+                        学生管理系统<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="../project/project_detail.html?pid=1">学生管理系统</a></li>
@@ -66,13 +65,13 @@
                         <div class="form-group">
                             <label for="api_name" class="col-sm-2 control-label">接口名称：</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="api_name" value="{{api.api_name}}">
+                                <input type="text" class="form-control" id="api_name" value="登录">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="api_method" class="col-sm-2 control-label">请求地址：</label>
                             <div class="col-sm-2">
-                                <select class="form-control" id="api_method" onchange="changeMethod(this)">
+                                <select class="form-control" id="api_method">
                                     <option value="POST" {% if api.api_method=='POST' %}selected{% endif %}>POST
                                     </option>
                                     <option value="GET" {% if api.api_method=='GET' %}selected{% endif %}>GET</option>
@@ -88,7 +87,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="api_url" placeholder="测试地址"
-                                       value="{{api.api_url}}">
+                                       value="/sys/login">
                             </div>
                         </div>
                     </form>
@@ -107,22 +106,21 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for api_header in api_header_list %}
                         <tr>
                             <td>
                                 <input type="text" class="form-control" name="name" placeholder="头部标签"
-                                       value="{{api_header.header_name}}">
+                                       value="area">
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="value" onkeyup="changeHeaderValue(this)"
-                                       placeholder="头部内容" alue="{{api_header.header_value}}">
+                                       placeholder="头部内容" value="010">
                             </td>
                             <td>
                                 <a onclick="openBindParamModal(this, 'header')">关联</a>
                                 <a onclick="delThisTr(this)">删除</a>
                             </td>
                         </tr>
-                        {% endfor %}
+
                         <tr>
                             <td>
                                 <input type="text" class="form-control" name="name" placeholder="头部标签">
@@ -165,14 +163,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_req_param_form.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}"
+                                    <input type="text" class="form-control" name="name" value="name"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="tom"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
@@ -180,7 +177,6 @@
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
 
                             <tr>
                                 <td>
@@ -209,14 +205,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_req_param_json.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}"
+                                    <input type="text" class="form-control" name="name" value="x"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="1"
                                            onkeyup="changeRelationParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
@@ -224,7 +219,6 @@
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
 
                             <tr>
                                 <td>
@@ -246,7 +240,7 @@
 
                     <div id="rawDiv" style="display: none; margin-top: 10px;">
                         <textarea id="raw" class="form-control" rows="4"
-                                  placeholder="源数据">{{api_req_param_raw}}</textarea>
+                                  placeholder="源数据">{"x":1}</textarea>
                     </div>
                 </div>
             </div>
@@ -272,20 +266,19 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for k,v in api_res_param_json.items() %}
                             <tr>
                                 <td>
-                                    <input type="text" class="form-control" name="name" value="{{k}}" placeholder="参数名">
+                                    <input type="text" class="form-control" name="name" value="success" placeholder="参数名">
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" name="value" value="{{v}}"
+                                    <input type="text" class="form-control" name="value" value="true"
                                            onkeyup="changeParamValue(this)" placeholder="参数值">
                                 </td>
                                 <td>
                                     <a onclick="delThisTr(this)">删除</a>
                                 </td>
                             </tr>
-                            {% endfor %}
+
                             <tr>
                                 <td>
                                     <input type="text" class="form-control" name="name" placeholder="参数名">
@@ -303,7 +296,7 @@
                     </div>
 
                     <div id="rawResDiv" style="display: none; margin-top: 10px;">
-                        <textarea id="resRaw" class="form-control" rows="4" placeholder="源数据">{{api_res_param_raw}}</textarea>
+                        <textarea id="resRaw" class="form-control" rows="4" placeholder="源数据">{"success":true}</textarea>
                     </div>
                 </div>
             </div>
@@ -362,9 +355,7 @@
                                        onkeyup="changeJsonCheckValue(this)" placeholder="校验值">
                             </td>
                             <td style="display: none">
-                                <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
+                                <a onclick="delThisTr(this)">删除</a>
                             </td>
                         </tr>
                         </tbody>
@@ -455,9 +446,7 @@
                    placeholder="校验值">
         </td>
         <td style="display: none">
-            <button type="button" class="btn btn-default btn-sm" onclick="delParamTableTr(this)">
-                <span class="glyphicon glyphicon-trash"></span>
-            </button>
+            <a onclick="delThisTr(this)">删除</a>
         </td>
     </tr>
     </tbody>
@@ -476,74 +465,12 @@
             type = "param"
         }
         var index = $(dom).parent().parent().index();
-        $("#bindParamModal").modal({
-            remote: './bind_param?case_id={{case.id}}&index=' + index + '&type=' + type
+        $("#bindParamModal").removeData("bs.modal").modal({
+            remote: './bind_param.html?case_id={{case.id}}&index=' + index + '&type=' + type
         });
     }
-
-    function changeMethod(dom) {
-        var rawBut = $('#rawBut');
-        if ($(dom).val() === 'POST') {
-            rawBut.show();
-        } else {
-            rawBut.hide();
-            if (rawBut.hasClass('btn-success')) {
-                rawBut.siblings().click();
-            }
-        }
-    }
-
-    function selectRequestParamTab(dom, type) {
-        $(dom).removeClass('btn-default').addClass('btn-success');
-        $(dom).siblings().removeClass('btn-success').addClass('btn-default');
-        if (type === 'form') {
-            $('#paramTable').parent().show();
-            $('#rawDiv').hide();
-        } else {
-            $('#paramTable').parent().hide();
-            $('#rawDiv').show();
-        }
-    }
-
-
-    function changeHeaderValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last a').show();
-            $(dom).parent().parent().parent().append($('#headerTrTemplate').html());
-        }
-    }
-
-
-    function changeJsonCheckValue(dom) {
-        var nextTr = $(dom).parent().parent().next();
-        if ($(dom).val() !== '' && nextTr.html() == null) {
-            $(dom).parent().parent().find('td:last').show();
-            $(dom).parent().parent().parent().append($('#jsonCheckTrTemplate').html());
-        }
-    }
-
-    function changeStatusCode(dom) {
-        if ($(dom).val() === '0') {
-            $('#customStatusCode').show();
-        } else {
-            $('#customStatusCode').hide();
-        }
-    }
-
 
     $(document).ready(function () {
-        // activeMenu('/case_list');
-
-        $("#bindParamModal").on("hidden.bs.modal", function () {
-            $(this).removeData("bs.modal");
-        });
-
-        //初始化选中tab
-        if ('{{api.api_req_param_type }}' === 'raw') {
-            $('#rawBut').click();
-        }
-
         $('input[name=header_name]').bsSuggest(headerLabelData);
         $('input[name=api_req_param_type]').click(function () {
             var type = $(this).val();
@@ -559,10 +486,10 @@
             $('#' + type + 'ResDiv').show();
         });
 
-
+        //初始化选中tab
+        $('input[name=api_req_param_type][value="{{ api_req_param_type }}"]').click();
+        $('input[name=api_res_param_type][value="{{ api_res_param_type }}"]').click();
     });
-
-
 </script>
 </body>
 </html>
